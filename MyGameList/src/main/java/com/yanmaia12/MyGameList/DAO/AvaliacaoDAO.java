@@ -1,11 +1,9 @@
 package com.yanmaia12.MyGameList.DAO;
 
 import com.yanmaia12.MyGameList.model.Avaliacao;
+import com.yanmaia12.MyGameList.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class AvaliacaoDAO {
     public Connection connection;
@@ -51,7 +49,7 @@ public class AvaliacaoDAO {
     }
 
     public void atualizarNota(double avaliacaoNv, int idAv){
-        String sql = "UPDATE avaliacoes SET avaliacao = ? WHERE id = ?";
+        String sql = "UPDATE avaliacoes SET avaliacao = ? WHERE nomeJogo = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setDouble(1, avaliacaoNv);
@@ -63,6 +61,28 @@ public class AvaliacaoDAO {
             }
         }catch (SQLException e){
             System.out.println("Erro ao atualizar avaliação: " + e.getMessage());
+        }
+    }
+
+    public void listarAvaliacoesuser(User userlogado){
+        String sql = "SELECT * FROM avaliacoes WHERE usuario_id = ?";
+
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setInt(1, userlogado.getId());
+
+            try(ResultSet rs = ps.executeQuery()){
+                while (rs.next()){
+                    String nome = rs.getString("nomeJogo");
+                    Double avaliacao = rs.getDouble("avaliacao");
+                    int idJogo = rs.getInt("jogo_id");
+
+                    System.out.println("%d | %s - %.2f⭐".formatted(idJogo, nome, avaliacao));
+                }
+            }catch (SQLException e){
+                System.out.println("Erro ao listar jogos! " +e.getMessage());
+            }
+        }catch (SQLException e){
+            System.out.println("Erro ao buscar jogos! " + e.getMessage());
         }
     }
 

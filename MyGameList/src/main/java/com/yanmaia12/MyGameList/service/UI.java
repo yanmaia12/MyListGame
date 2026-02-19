@@ -49,10 +49,11 @@ public class UI {
 
     public void menuUsuarioLogado(Scanner sc, User usuarioLogado) {
         boolean logado = true;
+        AvaliacaoDAO  avaliacaoDAO = new AvaliacaoDAO(Conexao.getConnection());
 
         while (logado) {
             System.out.println();
-            System.out.print("1 - Avaliar um Jogo\n2 - Ver perfil\n3 - Sair\nInsira aqui: ");
+            System.out.print("1 - Avaliar um Jogo\n2 - Ver perfil\n3 - Listar jogos avaliados\n0 - Sair\nInsira aqui: ");
             int escolha = sc.nextInt();
             System.out.println();
             sc.nextLine();
@@ -68,8 +69,13 @@ public class UI {
                     System.out.println("Membro desde: " + usuarioLogado.dataUser());
                     break;
                 case 3:
+                    System.out.println();
+                    avaliacaoDAO.listarAvaliacoesuser(usuarioLogado);
+                    System.out.println();
+                case 0:
                     logado = false;
                     break;
+
                 default:
                     System.out.println("Opção inválida.");
             }

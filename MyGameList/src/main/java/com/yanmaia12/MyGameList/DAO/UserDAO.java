@@ -80,7 +80,7 @@ public class UserDAO {
             preparedStatement.setString(2, user.getUsername());
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getSenha());
-            preparedStatement.setString(5, String.valueOf(Date.valueOf(user.getDataCadastro())));
+            preparedStatement.setDate(5, Date.valueOf(user.getDataCadastro()));
 
             preparedStatement.executeUpdate();
             System.out.println("Usuário %s criado com sucesso!".formatted(user.getUsername()));
