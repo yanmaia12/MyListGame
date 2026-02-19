@@ -80,4 +80,8 @@ public class User {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public LocalDate getDataCadastro() {
+        return dataCadastro;
+    }
 }

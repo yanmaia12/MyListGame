@@ -16,18 +16,19 @@ public class UserDAO {
     public void createUserTable(){
         String sql = """
                 CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                nome TEXT NOT NULL,
-                username TEXT NOT NULL UNIQUE,
-                email TEXT NOT NULL UNIQUE,
-                senha TEXT NOT NULL
-                dataCadastro DATE NOT NULL
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL,
+                username VARCHAR(50) NOT NULL UNIQUE,
+                email VARCHAR(255) NOT NULL UNIQUE,
+                senha VARCHAR(255) NOT NULL,
+                data_registro DATE NOT NULL
                 );
                 """;
         try(Statement statement = connection.createStatement()){
             statement.execute(sql);
+            System.out.println("Tabela usuarios criada!");
         } catch (SQLException e) {
-            System.out.println("Erro ao criar tabela 'usuarios'!");;
+            System.out.println("Erro ao criar tabela 'usuarios': " + e.getMessage());
         }
     }
 
@@ -72,14 +73,14 @@ public class UserDAO {
     }
 
     public void registerUser(User user){
-        String sql = "INSERT INTO usuarios (nome, username, email, senha, dataCadastro) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO usuarios (nome, username, email, senha, data_registro) VALUES (?, ?, ?, ?, ?)";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1, user.getNome());
             preparedStatement.setString(2, user.getUsername());
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getSenha());
-            preparedStatement.setString(5, user.dataUser());
+            preparedStatement.setString(5, String.valueOf(Date.valueOf(user.getDataCadastro())));
 
             preparedStatement.executeUpdate();
             System.out.println("Usuário %s criado com sucesso!".formatted(user.getUsername()));
@@ -104,7 +105,7 @@ public class UserDAO {
                     userLogado.setUsername(rs.getString("username"));
                     userLogado.setEmail(rs.getString("email"));
                     userLogado.setSenha(rs.getString("senha"));
-                    userLogado.setDataCadastro(rs.getDate("dataCadastro").toLocalDate());
+                    userLogado.setDataCadastro(rs.getDate("data_registro").toLocalDate());
 
                     return userLogado;
                 }
