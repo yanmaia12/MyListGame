@@ -1,9 +1,12 @@
 package com.yanmaia12.MyGameList.DAO;
 
 import com.yanmaia12.MyGameList.model.Avaliacao;
+import com.yanmaia12.MyGameList.model.Jogo;
 import com.yanmaia12.MyGameList.model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AvaliacaoDAO {
     public Connection connection;
@@ -87,6 +90,33 @@ public class AvaliacaoDAO {
         }catch (SQLException e){
             System.out.println("Erro ao buscar jogos! " + e.getMessage());
         }
+    }
+
+    public List<Jogo> listarAvaliacoesuserLista(User userlogado){
+        String sql = "SELECT * FROM avaliacoes WHERE usuario_id = ?";
+
+        List<Jogo> lisatJogos = new ArrayList<>();
+
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setInt(1, userlogado.getId());
+
+            try(ResultSet rs = ps.executeQuery()){
+                while (rs.next()){
+                    String nome = rs.getString("nomeJogo");
+                    Double avaliacao = rs.getDouble("avaliacao");
+                    int idJogo = rs.getInt("jogo_id");
+
+                    Jogo jogoAv = new Jogo(idJogo, nome, avaliacao);
+
+                    lisatJogos.add(jogoAv);
+                }
+            }catch (SQLException e){
+                System.out.println("Erro ao listar jogos! " +e.getMessage());
+            }
+        }catch (SQLException e){
+            System.out.println("Erro ao buscar jogos! " + e.getMessage());
+        }
+        return lisatJogos;
     }
 
     public void deleteAvaliacao(User userLogado, int idjogo){

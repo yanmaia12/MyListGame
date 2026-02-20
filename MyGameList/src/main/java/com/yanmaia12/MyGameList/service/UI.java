@@ -76,7 +76,7 @@ public class UI {
 
         while (logado) {
             System.out.println();
-            System.out.print("1 - Avaliar um Jogo\n2 - Ver perfil\n3 - Listar jogos avaliados\n4 - Atualizar nota (precisa do id do jogo)\n5 - Apagar avaliação (precisa do id do jogo)\n0 - Sair\nInsira aqui: ");
+            System.out.print("1 - Avaliar um Jogo\n2 - Ver perfil\n3 - Listar jogos avaliados\n4 - Atualizar nota (precisa do id do jogo)\n5 - Apagar avaliação (precisa do id do jogo)\n6 - Estatísticas do usuário\n0 - Sair\nInsira aqui: ");
             int escolha = sc.nextInt();
             System.out.println();
             sc.nextLine();
@@ -126,6 +126,10 @@ public class UI {
                     } catch (IOException | InterruptedException e) {
                         System.out.println("Erro ao buscar jogo na api: " + e.getMessage());
                     }
+                    break;
+                case 6:
+                    Calculos calculos = new Calculos();
+                    calculos.calculosAv(usuarioLogado);
                     break;
                 case 0:
                     logado = false;
@@ -192,7 +196,6 @@ public class UI {
 
                     if (userLogado != null){
                         System.out.println("Login realizado com sucesso!");
-                        System.out.println();
                         menuUsuarioLogado(sc, userLogado);
                     }
                     break;
