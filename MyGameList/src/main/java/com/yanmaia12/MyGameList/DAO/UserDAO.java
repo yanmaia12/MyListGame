@@ -1,6 +1,7 @@
 package com.yanmaia12.MyGameList.DAO;
 
 import com.yanmaia12.MyGameList.model.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -79,7 +80,8 @@ public class UserDAO {
             preparedStatement.setString(1, user.getNome());
             preparedStatement.setString(2, user.getUsername());
             preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getSenha());
+            String senhaCriptografada = BCrypt.hashpw(user.getSenha(), BCrypt.gensalt());
+            preparedStatement.setString(4, senhaCriptografada);
             preparedStatement.setDate(5, Date.valueOf(user.getDataCadastro()));
 
             preparedStatement.executeUpdate();
@@ -90,24 +92,30 @@ public class UserDAO {
     }
 
     public User fazerLogin(String username, String senha){
-        String sql = "SELECT * FROM usuarios WHERE username = ? AND senha = ?";
+        String sql = "SELECT * FROM usuarios WHERE username = ?";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, senha);
+
 
             try(ResultSet rs = preparedStatement.executeQuery()){
                 if (rs.next()){
+                    String hash = rs.getString("senha");
                     User userLogado = new User();
 
-                    userLogado.setId(rs.getInt("id"));
-                    userLogado.setNome(rs.getString("nome"));
-                    userLogado.setUsername(rs.getString("username"));
-                    userLogado.setEmail(rs.getString("email"));
-                    userLogado.setSenha(rs.getString("senha"));
-                    userLogado.setDataCadastro(rs.getDate("data_registro").toLocalDate());
+                    if (BCrypt.checkpw(senha, hash)){
+                        userLogado.setId(rs.getInt("id"));
+                        userLogado.setNome(rs.getString("nome"));
+                        userLogado.setUsername(rs.getString("username"));
+                        userLogado.setEmail(rs.getString("email"));
+                        userLogado.setSenha(rs.getString("senha"));
+                        userLogado.setDataCadastro(rs.getDate("data_registro").toLocalDate());
 
-                    return userLogado;
+                        return userLogado;
+                    }else{
+                        return null;
+                    }
+
                 }
             }catch (SQLException e){
                 System.out.println("Erro ao fazer login: " + e.getMessage());
