@@ -33,4 +33,30 @@ public class Igdb {
 
         return jogo;
     }
+
+    public Jogo buscarJogoID(int id) throws IOException, InterruptedException {
+        TwitchAuth twitchAuth = new TwitchAuth();
+        String clientId = Keys.TWITCH_CLIENT_ID;
+        String url = "https://api.igdb.com/v4/games";
+        String pesquisa = "fields id, name, rating, category; where id = " + id + ";";
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Client-ID", clientId)
+                .header("Authorization", "Bearer " + twitchAuth.auth())
+                .POST(HttpRequest.BodyPublishers.ofString(pesquisa))
+                .build();
+        HttpResponse<String> response = client
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Jogo[] jogo = objectMapper.readValue(response.body(), Jogo[].class);
+
+        if (jogo.length > 0) {
+            return jogo[0];
+        } else {
+            return null;
+        }
+    }
 }

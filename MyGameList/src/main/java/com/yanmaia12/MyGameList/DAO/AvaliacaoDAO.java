@@ -48,16 +48,19 @@ public class AvaliacaoDAO {
         }
     }
 
-    public void atualizarNota(double avaliacaoNv, int idAv){
-        String sql = "UPDATE avaliacoes SET avaliacao = ? WHERE nomeJogo = ?";
+    public void atualizarNota(int idJogo, double avaliacaoNv, User userLogado){
+        String sql = "UPDATE avaliacoes SET avaliacao = ? WHERE jogo_id = ? AND usuario_id = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setDouble(1, avaliacaoNv);
-            ps.setInt(2, idAv);
+            ps.setInt(2, idJogo);
+            ps.setInt(3, userLogado.getId());
 
             int linhas = ps.executeUpdate();
             if (linhas > 0){
                 System.out.println("Avaliação atualizada!");
+            }else{
+                System.out.println("Você não avaliou esse jogo ainda!");
             }
         }catch (SQLException e){
             System.out.println("Erro ao atualizar avaliação: " + e.getMessage());
@@ -86,15 +89,18 @@ public class AvaliacaoDAO {
         }
     }
 
-    public void deleteAvaliacao(int idAV){
-        String sql = "DELETE FROM avaliacoes WHERE id = ?";
+    public void deleteAvaliacao(User userLogado, int idjogo){
+        String sql = "DELETE FROM avaliacoes WHERE jogo_id = ? AND usuario_id = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setInt(1, idAV);
+            ps.setInt(1, idjogo);
+            ps.setInt(2, userLogado.getId());
 
             int linhas = ps.executeUpdate();
             if (linhas > 0){
                 System.out.println("Avaliação apagada com sucesso!");
+            }else{
+                System.out.println("Você não avaliou esse jogo ainda!");
             }
         }catch (SQLException e){
             System.out.println("Erro ao apagar avalição: "+e.getMessage());

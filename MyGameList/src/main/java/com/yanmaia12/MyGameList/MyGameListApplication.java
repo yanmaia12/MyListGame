@@ -39,7 +39,7 @@ public class MyGameListApplication implements CommandLineRunner {
 			interfaceUsuario.menuLogin(sc);
 
 		} else {
-			System.out.println("Não foi possível iniciar o MyGameList pois o banco de dados está offline.");
+			System.out.println("1Não foi possível iniciar o MyGameList pois o banco de dados está offline.");
 		}
 	}
 }
